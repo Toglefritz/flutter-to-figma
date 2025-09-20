@@ -42,6 +42,26 @@ export interface WidgetProperties {
   padding?: EdgeInsets;
   margin?: EdgeInsets;
   decoration?: BoxDecoration;
+  flex?: number;
+  isExpanded?: boolean;
+  isPositioned?: boolean;
+  positioned?: PositionedProperties;
+  left?: number;
+  right?: number;
+  top?: number;
+  bottom?: number;
+}
+
+/**
+ * Properties for Positioned widgets
+ */
+export interface PositionedProperties {
+  left?: number;
+  right?: number;
+  top?: number;
+  bottom?: number;
+  width?: number;
+  height?: number;
 }
 
 /**
@@ -136,6 +156,12 @@ export interface LayoutInfo {
   alignment?: AlignmentInfo;
   spacing?: number;
   padding?: EdgeInsets;
+  width?: number;
+  height?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
 }
 
 /**

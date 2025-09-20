@@ -71,22 +71,22 @@
     - Write tests for multi-mode theme scenarios
     - _Requirements: 3.3_
 
-- [ ] 5. Build Figma node creation system
-  - [ ] 5.1 Implement base node factory
+- [x] 5. Build Figma node creation system
+  - [x] 5.1 Implement base node factory
     - Create NodeFactory class with methods for each Figma node type
     - Implement frame creation with basic properties
     - Add text node creation with content and styling
     - Write tests for basic node creation
     - _Requirements: 2.1, 2.2_
 
-  - [ ] 5.2 Add Auto Layout implementation
+  - [x] 5.2 Add Auto Layout implementation
     - Create Auto Layout property mapper for Row/Column widgets
     - Implement spacing, padding, and alignment application
     - Handle flex properties and sizing constraints
     - Write tests for Auto Layout configurations
     - _Requirements: 2.3, 4.4_
 
-  - [ ] 5.3 Implement positioned layout handling
+  - [x] 5.3 Implement positioned layout handling
     - Create absolute positioning system for Stack widgets
     - Handle Positioned widget constraints and offsets
     - Implement z-index ordering for stacked elements
