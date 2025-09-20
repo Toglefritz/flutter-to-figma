@@ -6,21 +6,21 @@
   - Set up error handling types and base classes
   - _Requirements: 1.1, 6.1_
 
-- [ ] 2. Implement Dart code parsing foundation
-  - [ ] 2.1 Create basic Dart lexer and tokenizer
+- [x] 2. Implement Dart code parsing foundation
+  - [x] 2.1 Create basic Dart lexer and tokenizer
     - Write tokenizer to break Dart code into meaningful tokens
     - Implement token classification (keywords, identifiers, operators, literals)
     - Create unit tests for tokenization of Flutter widget syntax
     - _Requirements: 1.1, 1.2, 6.2_
 
-  - [ ] 2.2 Build AST parser for Dart expressions
+  - [x] 2.2 Build AST parser for Dart expressions
     - Implement parser to build Abstract Syntax Tree from tokens
     - Handle Dart constructor calls, named parameters, and nested expressions
     - Create AST node types for different Dart constructs
     - Write tests for parsing various Dart expression patterns
     - _Requirements: 1.1, 1.2, 8.1_
 
-  - [ ] 2.3 Implement Flutter widget detection
+  - [x] 2.3 Implement Flutter widget detection
     - Create widget identifier that recognizes Flutter widget constructors
     - Extract widget properties from constructor parameters
     - Handle both positional and named parameters

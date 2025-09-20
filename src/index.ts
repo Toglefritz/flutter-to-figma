@@ -3,10 +3,55 @@
 // Core types and interfaces
 export * from './schema';
 export * from './figma/figma-node-spec';
-export * from './errors';
+
+// Error handling (use specific exports to avoid conflicts)
+export {
+  PluginError,
+  ErrorCategory,
+  ParseError as PluginParseError,
+  WidgetError,
+  ThemeError,
+  ConversionError,
+  VariableError,
+  FigmaApiError,
+  ValidationError,
+  ErrorResult,
+  ParseResult as PluginParseResult,
+  ValidationResult as PluginValidationResult,
+  ErrorHandler,
+  GracefulErrorHandler
+} from './errors';
+
+// Parser module (use specific exports to avoid conflicts)
+export {
+  DartParser,
+  DartLexer,
+  WidgetExtractor,
+  TokenType,
+  Token,
+  ASTNodeType,
+  ASTNode,
+  ConstructorCallNode,
+  IdentifierNode,
+  LiteralNode,
+  PropertyAccessNode,
+  MethodCallNode,
+  ArrayLiteralNode,
+  NamedArgumentNode,
+  PositionalArgumentNode,
+  ArgumentListNode,
+  ProgramNode,
+  ExpressionNode,
+  LexerResult,
+  LexerError,
+  ParseResult,
+  ParseError,
+  ValidationResult,
+  EnhancedParseResult,
+  WidgetExtractionResult
+} from './parser';
 
 // Module exports
-export * from './parser';
 export * from './figma';
 export * from './ui';
 
@@ -21,7 +66,3 @@ export type {
 export type {
   FigmaNodeSpec
 } from './figma/figma-node-spec';
-
-export type {
-  PluginError
-} from './errors';
