@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Flutter → Figma Converter</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #333;
+      background: #fff;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 11px;
+    }
+
+    .upload-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-upload {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 32px 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      background: #fafafa;
+    }
+
+    .file-upload:hover {
+      border-color: #0066cc;
+      background: #f0f7ff;
+    }
+
+    .file-upload.dragover {
+      border-color: #0066cc;
+      background: #e6f3ff;
+    }
+
+    .file-upload-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      opacity: 0.5;
+    }
+
+    .file-upload-text {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .file-upload-hint {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-preview {
+      display: none;
+      background: #f8f9fa;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .file-preview.show {
+      display: block;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .file-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+
+    .file-name {
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .file-size {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .file-content {
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 4px;
+      padding: 8px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+      font-size: 11px;
+      max-height: 120px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .progress-section {
+      display: none;
+      margin-bottom: 16px;
+    }
+
+    .progress-section.show {
+      display: block;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e1e4e8;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #0066cc;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 11px;
+      color: #666;
+      text-align: center;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid #e1e4e8;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #f8f9fa;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #0066cc;
+      color: #fff;
+      border-color: #0066cc;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #0052a3;
+    }
+
+    .validation-results {
+      display: none;
+      margin-bottom: 16px;
+    }
+
+    .validation-results.show {
+      display: block;
+    }
+
+    .validation-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .validation-item.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .validation-item.warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .validation-item.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .validation-icon {
+      width: 12px;
+      height: 12px;
+      margin-right: 6px;
+    }
+
+    .conversion-summary {
+      display: none;
+      margin-bottom: 16px;
+      background: #f8f9fa;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .conversion-summary.show {
+      display: block;
+    }
+
+    .conversion-summary.empty {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+    }
+
+    .summary-header {
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .summary-header h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .summary-status {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .summary-status.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .summary-status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .summary-stats {
+      margin-bottom: 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 8px 4px;
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #e1e4e8;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0066cc;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .success-rate {
+      margin-top: 8px;
+    }
+
+    .success-rate-bar {
+      width: 100%;
+      height: 6px;
+      background: #e1e4e8;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .success-rate-fill {
+      height: 100%;
+      background: #28a745;
+      transition: width 0.3s ease;
+    }
+
+    .success-rate-text {
+      font-size: 11px;
+      color: #666;
+      text-align: center;
+    }
+
+    .summary-elements {
+      margin-bottom: 12px;
+    }
+
+    .summary-elements h4 {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .element-group {
+      margin-bottom: 8px;
+    }
+
+    .element-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+      background: #fff;
+      border: 1px solid #e1e4e8;
+      border-radius: 4px 4px 0 0;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .element-type {
+      color: #333;
+    }
+
+    .element-count {
+      background: #0066cc;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    .element-list {
+      border: 1px solid #e1e4e8;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      background: #fff;
+    }
+
+    .element-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      border-bottom: 1px solid #f1f3f4;
+      font-size: 11px;
+    }
+
+    .element-item:last-child {
+      border-bottom: none;
+    }
+
+    .element-item.more {
+      color: #666;
+      font-style: italic;
+      justify-content: center;
+    }
+
+    .element-icon {
+      margin-right: 6px;
+      font-size: 12px;
+    }
+
+    .element-info {
+      flex: 1;
+    }
+
+    .element-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .element-source {
+      color: #666;
+      font-size: 10px;
+      margin-top: 1px;
+    }
+
+    .element-link {
+      margin-left: 8px;
+    }
+
+    .link-button {
+      background: #0066cc;
+      color: #fff;
+      border: none;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .link-button:hover {
+      background: #0052a3;
+    }
+
+    .summary-performance {
+      border-top: 1px solid #e1e4e8;
+      padding-top: 8px;
+    }
+
+    .performance-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+
+    .performance-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .performance-label {
+      color: #666;
+    }
+
+    .performance-value {
+      font-weight: 500;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Flutter → Figma Converter</h1>
+      <p>Upload your Flutter/Dart files to generate Figma designs</p>
+    </div>
+
+    <div class="upload-section">
+      <div class="file-upload" id="fileUpload">
+        <div class="file-upload-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+        </div>
+        <div class="file-upload-text">Drop your Dart files here or click to browse</div>
+        <div class="file-upload-hint">Supports .dart files up to 5MB</div>
+      </div>
+      
+      <input type="file" id="fileInput" class="file-input" accept=".dart" multiple>
+
+      <div class="file-preview" id="filePreview">
+        <div class="file-info">
+          <div class="file-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+            </svg>
+          </div>
+          <span class="file-name" id="fileName"></span>
+          <span class="file-size" id="fileSize"></span>
+        </div>
+        <div class="file-content" id="fileContent"></div>
+      </div>
+
+      <div class="validation-results" id="validationResults"></div>
+
+      <div class="progress-section" id="progressSection">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Processing...</div>
+      </div>
+
+      <div class="conversion-summary" id="conversionSummary"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="clearBtn" disabled>Clear</button>
+      <button class="btn btn-primary" id="convertBtn" disabled>Convert to Figma</button>
+    </div>
+  </div>
+
+  <script>
+    // UI Script will be implemented in the FileHandler class
+    // This script handles the file upload interface interactions
+    
+    class FileUploadUI {
+      constructor() {
+        this.fileInput = document.getElementById('fileInput');
+        this.fileUpload = document.getElementById('fileUpload');
+        this.filePreview = document.getElementById('filePreview');
+        this.fileName = document.getElementById('fileName');
+        this.fileSize = document.getElementById('fileSize');
+        this.fileContent = document.getElementById('fileContent');
+        this.validationResults = document.getElementById('validationResults');
+        this.progressSection = document.getElementById('progressSection');
+        this.progressFill = document.getElementById('progressFill');
+        this.progressText = document.getElementById('progressText');
+        this.conversionSummary = document.getElementById('conversionSummary');
+        this.clearBtn = document.getElementById('clearBtn');
+        this.convertBtn = document.getElementById('convertBtn');
+        
+        this.currentFile = null;
+        this.initializeEventListeners();
+      }
+
+      initializeEventListeners() {
+        // File upload click
+        this.fileUpload.addEventListener('click', () => {
+          this.fileInput.click();
+        });
+
+        // File input change
+        this.fileInput.addEventListener('change', (e) => {
+          this.handleFileSelect(e.target.files);
+        });
+
+        // Drag and drop
+        this.fileUpload.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          this.fileUpload.classList.add('dragover');
+        });
+
+        this.fileUpload.addEventListener('dragleave', () => {
+          this.fileUpload.classList.remove('dragover');
+        });
+
+        this.fileUpload.addEventListener('drop', (e) => {
+          e.preventDefault();
+          this.fileUpload.classList.remove('dragover');
+          this.handleFileSelect(e.dataTransfer.files);
+        });
+
+        // Button actions
+        this.clearBtn.addEventListener('click', () => {
+          this.clearFile();
+        });
+
+        this.convertBtn.addEventListener('click', () => {
+          this.convertFile();
+        });
+
+        // Listen for messages from plugin
+        window.onmessage = (event) => {
+          this.handlePluginMessage(event.data.pluginMessage);
+        };
+      }
+
+      handleFileSelect(files) {
+        if (files.length === 0) return;
+        
+        const file = files[0];
+        
+        // Validate file
+        if (!this.validateFile(file)) return;
+        
+        this.currentFile = file;
+        this.showFilePreview(file);
+        this.validateFileContent(file);
+      }
+
+      validateFile(file) {
+        const validations = [];
+        
+        // Check file extension
+        if (!file.name.endsWith('.dart')) {
+          validations.push({
+            type: 'error',
+            message: 'Only .dart files are supported'
+          });
+        } else {
+          validations.push({
+            type: 'success',
+            message: 'Valid Dart file format'
+          });
+        }
+        
+        // Check file size (5MB limit)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+          validations.push({
+            type: 'error',
+            message: `File size (${this.formatFileSize(file.size)}) exceeds 5MB limit`
+          });
+        } else {
+          validations.push({
+            type: 'success',
+            message: `File size: ${this.formatFileSize(file.size)}`
+          });
+        }
+        
+        this.showValidationResults(validations);
+        
+        // Return true if no errors
+        return !validations.some(v => v.type === 'error');
+      }
+
+      async validateFileContent(file) {
+        try {
+          const content = await this.readFileContent(file);
+          
+          // Send to plugin for validation
+          parent.postMessage({
+            pluginMessage: {
+              type: 'validate-dart-file',
+              content: content,
+              fileName: file.name
+            }
+          }, '*');
+          
+        } catch (error) {
+          this.showValidationResults([{
+            type: 'error',
+            message: `Failed to read file: ${error.message}`
+          }]);
+        }
+      }
+
+      readFileContent(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = (e) => reject(new Error('Failed to read file'));
+          reader.readAsText(file);
+        });
+      }
+
+      showFilePreview(file) {
+        this.fileName.textContent = file.name;
+        this.fileSize.textContent = this.formatFileSize(file.size);
+        
+        // Show preview of file content (first 500 characters)
+        this.readFileContent(file).then(content => {
+          const preview = content.length > 500 ? content.substring(0, 500) + '...' : content;
+          this.fileContent.textContent = preview;
+        });
+        
+        this.filePreview.classList.add('show');
+        this.clearBtn.disabled = false;
+        this.convertBtn.disabled = false;
+      }
+
+      showValidationResults(validations) {
+        this.validationResults.innerHTML = '';
+        
+        validations.forEach(validation => {
+          const item = document.createElement('div');
+          item.className = `validation-item ${validation.type}`;
+          
+          const icon = document.createElement('div');
+          icon.className = 'validation-icon';
+          icon.innerHTML = this.getValidationIcon(validation.type);
+          
+          const message = document.createElement('span');
+          message.textContent = validation.message;
+          
+          item.appendChild(icon);
+          item.appendChild(message);
+          this.validationResults.appendChild(item);
+        });
+        
+        this.validationResults.classList.add('show');
+      }
+
+      getValidationIcon(type) {
+        switch (type) {
+          case 'success':
+            return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" /></svg>';
+          case 'warning':
+            return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>';
+          case 'error':
+            return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>';
+          default:
+            return '';
+        }
+      }
+
+      showProgress(progress, text) {
+        this.progressFill.style.width = `${progress}%`;
+        this.progressText.textContent = text;
+        this.progressSection.classList.add('show');
+      }
+
+      hideProgress() {
+        this.progressSection.classList.remove('show');
+      }
+
+      showSummary(summaryHTML) {
+        this.conversionSummary.innerHTML = summaryHTML;
+        this.conversionSummary.classList.add('show');
+      }
+
+      hideSummary() {
+        this.conversionSummary.classList.remove('show');
+        this.conversionSummary.innerHTML = '';
+      }
+
+      clearFile() {
+        this.currentFile = null;
+        this.fileInput.value = '';
+        this.filePreview.classList.remove('show');
+        this.validationResults.classList.remove('show');
+        this.hideProgress();
+        this.hideSummary();
+        this.clearBtn.disabled = true;
+        this.convertBtn.disabled = true;
+      }
+
+      async convertFile() {
+        if (!this.currentFile) return;
+        
+        try {
+          this.convertBtn.disabled = true;
+          this.showProgress(10, 'Reading file...');
+          
+          const content = await this.readFileContent(this.currentFile);
+          
+          this.showProgress(30, 'Sending to plugin...');
+          
+          // Send to plugin for conversion
+          parent.postMessage({
+            pluginMessage: {
+              type: 'convert-flutter-code',
+              content: content,
+              fileName: this.currentFile.name
+            }
+          }, '*');
+          
+        } catch (error) {
+          this.showValidationResults([{
+            type: 'error',
+            message: `Conversion failed: ${error.message}`
+          }]);
+          this.convertBtn.disabled = false;
+          this.hideProgress();
+        }
+      }
+
+      handlePluginMessage(message) {
+        switch (message.type) {
+          case 'validation-result':
+            this.handleValidationResult(message);
+            break;
+          case 'conversion-progress':
+            this.showProgress(message.progress, message.text);
+            break;
+          case 'conversion-complete':
+            this.handleConversionComplete(message);
+            break;
+          case 'conversion-summary':
+            this.handleConversionSummary(message);
+            break;
+          case 'error':
+            this.handleError(message);
+            break;
+        }
+      }
+
+      handleValidationResult(message) {
+        const validations = message.validations || [];
+        this.showValidationResults(validations);
+        
+        // Enable/disable convert button based on validation
+        const hasErrors = validations.some(v => v.type === 'error');
+        this.convertBtn.disabled = hasErrors;
+      }
+
+      handleConversionComplete(message) {
+        this.showProgress(100, 'Conversion complete!');
+        this.convertBtn.disabled = false;
+        
+        // Show summary if provided
+        if (message.summaryHTML) {
+          setTimeout(() => {
+            this.hideProgress();
+            this.showSummary(message.summaryHTML);
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            this.hideProgress();
+          }, 2000);
+        }
+      }
+
+      handleConversionSummary(message) {
+        if (message.summaryHTML) {
+          this.showSummary(message.summaryHTML);
+        }
+      }
+
+      handleError(message) {
+        this.showValidationResults([{
+          type: 'error',
+          message: message.message || 'An unknown error occurred'
+        }]);
+        this.convertBtn.disabled = false;
+        this.hideProgress();
+      }
+
+      formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+    }
+
+    // Initialize the UI when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new FileUploadUI();
+    });
+  </script>
+</body>
+</html>

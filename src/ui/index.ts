@@ -2,3 +2,4 @@
 export * from './file-handler';
 export * from './error-display';
 export * from './progress-indicator';
+export * from './conversion-summary';

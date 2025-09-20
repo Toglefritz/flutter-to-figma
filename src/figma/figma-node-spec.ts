@@ -1,4 +1,5 @@
 // Figma-specific node specifications and mappings
+import { VariableType, VariableScope } from './variable-manager';
 
 /**
  * Figma node specification for creating nodes
@@ -62,35 +63,7 @@ export interface FigmaVariableSpec {
   description?: string;
 }
 
-/**
- * Figma Variable types
- */
-export enum VariableType {
-  COLOR = 'COLOR',
-  FLOAT = 'FLOAT',
-  STRING = 'STRING',
-  BOOLEAN = 'BOOLEAN'
-}
 
-/**
- * Figma Variable scopes
- */
-export enum VariableScope {
-  ALL_FILLS = 'ALL_FILLS',
-  FRAME_FILL = 'FRAME_FILL',
-  SHAPE_FILL = 'SHAPE_FILL',
-  TEXT_FILL = 'TEXT_FILL',
-  ALL_STROKES = 'ALL_STROKES',
-  STROKE_COLOR = 'STROKE_COLOR',
-  FONT_FAMILY = 'FONT_FAMILY',
-  FONT_SIZE = 'FONT_SIZE',
-  FONT_WEIGHT = 'FONT_WEIGHT',
-  LINE_HEIGHT = 'LINE_HEIGHT',
-  LETTER_SPACING = 'LETTER_SPACING',
-  CORNER_RADIUS = 'CORNER_RADIUS',
-  WIDTH_HEIGHT = 'WIDTH_HEIGHT',
-  GAP = 'GAP'
-}
 
 /**
  * Variable value for different modes
