@@ -3,9 +3,26 @@
     "target": "es6",
     "lib": ["es6"],
     "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@figma"
-    ]
-  }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "include": [
+    "src/**/*",
+    "code.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
