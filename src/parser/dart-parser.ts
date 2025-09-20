@@ -274,17 +274,29 @@ export class DartLexer {
   }
 
   private scanNumber(start: number, startLine: number, startColumn: number): void {
-    while (this.isDigit(this.peek())) {
-      this.advance();
-    }
-
-    // Look for decimal part
-    if (this.peek() === '.' && this.isDigit(this.peekNext())) {
-      // Consume the '.'
-      this.advance();
+    // Check for hex literal (0x...)
+    if (this.source.charAt(start) === '0' && 
+        (this.peek() === 'x' || this.peek() === 'X')) {
+      this.advance(); // consume 'x' or 'X'
       
+      // Scan hex digits
+      while (this.isHexDigit(this.peek())) {
+        this.advance();
+      }
+    } else {
+      // Regular decimal number
       while (this.isDigit(this.peek())) {
         this.advance();
+      }
+
+      // Look for decimal part
+      if (this.peek() === '.' && this.isDigit(this.peekNext())) {
+        // Consume the '.'
+        this.advance();
+        
+        while (this.isDigit(this.peek())) {
+          this.advance();
+        }
       }
     }
 
@@ -352,6 +364,12 @@ export class DartLexer {
 
   private isDigit(char: string): boolean {
     return char >= '0' && char <= '9';
+  }
+
+  private isHexDigit(char: string): boolean {
+    return this.isDigit(char) || 
+           (char >= 'a' && char <= 'f') || 
+           (char >= 'A' && char <= 'F');
   }
 
   private isAlpha(char: string): boolean {
