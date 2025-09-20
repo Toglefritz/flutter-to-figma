@@ -4,3 +4,5 @@ export * from './node-factory';
 export * from './style-mapper';
 export * from './component-builder';
 export * from './variable-manager';
+export * from './variant-manager';
+export * from './component-organizer';
