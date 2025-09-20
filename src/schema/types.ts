@@ -72,7 +72,7 @@ export interface StyleInfo {
   typography?: TypographyInfo;
   spacing?: SpacingInfo;
   borders?: BorderInfo;
-  shadows?: ShadowInfo;
+  shadows?: ShadowInfo[];
 }
 
 /**
