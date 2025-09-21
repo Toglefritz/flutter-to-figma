@@ -1,3 +1,6 @@
+// Flutter → Figma Plugin - Embedded HTML Version
+
+const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -272,7 +275,7 @@
       
       validations.forEach(validation => {
         const item = document.createElement('div');
-        item.className = `validation-item ${validation.type}`;
+        item.className = 'validation-item ' + validation.type;
         item.textContent = validation.message;
         validationResults.appendChild(item);
       });
@@ -281,7 +284,7 @@
     }
 
     function showProgress(progress, text) {
-      progressFill.style.width = `${progress}%`;
+      progressFill.style.width = progress + '%';
       progressText.textContent = text;
       progressSection.classList.add('show');
     }
@@ -321,7 +324,7 @@
       } catch (error) {
         showValidation([{
           type: 'error',
-          message: `Conversion failed: ${error.message}`
+          message: 'Conversion failed: ' + error.message
         }]);
         convertBtn.disabled = false;
         hideProgress();
@@ -364,3 +367,112 @@
   </script>
 </body>
 </html>
+`;
+
+// Show the UI with embedded HTML
+figma.showUI(htmlContent, { 
+  width: 400, 
+  height: 600,
+  title: 'Flutter → Figma Converter'
+});
+
+// Handle messages from UI
+figma.ui.onmessage = async (msg) => {
+  try {
+    switch (msg.type) {
+      case 'convert-flutter-code':
+        await handleFlutterCodeConversion(msg.content, msg.fileName);
+        break;
+      case 'close-plugin':
+        figma.closePlugin();
+        break;
+      default:
+        console.warn('Unknown message type:', msg.type);
+    }
+  } catch (error) {
+    console.error('Plugin error:', error);
+    figma.ui.postMessage({
+      type: 'error',
+      message: error.message || 'Unknown error occurred'
+    });
+  }
+};
+
+// Handle Flutter code conversion
+async function handleFlutterCodeConversion(content, fileName) {
+  try {
+    // Send progress updates
+    figma.ui.postMessage({
+      type: 'conversion-progress',
+      progress: 10,
+      text: 'Starting conversion...'
+    });
+
+    // Basic validation
+    if (!content || content.trim().length === 0) {
+      figma.ui.postMessage({
+        type: 'error',
+        message: 'File content is empty. Please select a valid Dart file.'
+      });
+      return;
+    }
+
+    figma.ui.postMessage({
+      type: 'conversion-progress',
+      progress: 30,
+      text: 'Parsing Flutter widgets...'
+    });
+
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    figma.ui.postMessage({
+      type: 'conversion-progress',
+      progress: 60,
+      text: 'Creating Figma elements...'
+    });
+
+    // Create a demonstration frame
+    const frame = figma.createFrame();
+    frame.name = 'Flutter Conversion - ' + fileName;
+    frame.resize(400, 300);
+    frame.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 0.95 } }];
+
+    // Add a text node to show it's working
+    const textNode = figma.createText();
+    await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+    textNode.characters = 'Converted from: ' + fileName + '\n\n' +
+      'This is a demo conversion showing that the UI is working!\n\n' +
+      'File size: ' + content.length + ' characters\n' +
+      'Contains Flutter widgets: ' + (content.includes('Widget') ? 'Yes' : 'No') + '\n' +
+      'Contains Container: ' + (content.includes('Container') ? 'Yes' : 'No') + '\n' +
+      'Contains Text: ' + (content.includes('Text') ? 'Yes' : 'No');
+    textNode.fontSize = 12;
+    textNode.fills = [{ type: 'SOLID', color: { r: 0.2, g: 0.2, b: 0.2 } }];
+    textNode.x = 20;
+    textNode.y = 20;
+    textNode.resize(360, 200);
+
+    frame.appendChild(textNode);
+    figma.currentPage.appendChild(frame);
+
+    // Select the created frame
+    figma.currentPage.selection = [frame];
+    figma.viewport.scrollAndZoomIntoView([frame]);
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Send completion message
+    figma.ui.postMessage({
+      type: 'conversion-complete',
+      message: 'Demo conversion complete! The UI is now working correctly.'
+    });
+
+  } catch (error) {
+    console.error('Conversion error:', error);
+    figma.ui.postMessage({
+      type: 'error',
+      message: 'Conversion failed: ' + (error.message || 'Unknown error')
+    });
+  }
+}

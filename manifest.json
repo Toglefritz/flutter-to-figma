@@ -2,7 +2,7 @@
   "name": "flutter_to_figma",
   "id": "1551020536921725997",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "code-embedded.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
