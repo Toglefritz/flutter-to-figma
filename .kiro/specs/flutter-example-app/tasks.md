@@ -7,14 +7,14 @@
   - Implement bottom navigation bar for primary lateral navigation
   - _Requirements: 4.1, 4.4, 5.1, 5.6_
 
-- [ ] 2. Create data models and core utilities
-  - [ ] 2.1 Implement CalculatorState model
+- [x] 2. Create data models and core utilities
+  - [x] 2.1 Implement CalculatorState model
     - Write CalculatorState class with immutable properties for display, operands, operation, and input state
     - Create factory constructors for different calculator states
     - Add validation methods for calculator operations
     - _Requirements: 2.4, 2.6, 5.1_
 
-  - [ ] 2.2 Implement ColorData model with conversion utilities
+  - [x] 2.2 Implement ColorData model with conversion utilities
     - Write ColorData class with RGB and HSL properties
     - Implement color format conversion methods (hex, RGB, RGBA, HSL strings)
     - Create Flutter Color object generation method
