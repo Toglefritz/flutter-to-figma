@@ -102,7 +102,7 @@ class ColorFormatDisplay extends StatelessWidget {
       button: true,
       onTap: _handleCopy,
       child: Material(
-        color: textColor.withOpacity(0.1),
+        color: textColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
@@ -127,7 +127,7 @@ class ColorFormatDisplay extends StatelessWidget {
                     ),
                     Icon(
                       Icons.copy,
-                      color: textColor.withOpacity(0.6),
+                      color: textColor.withValues(alpha: 0.6),
                       size: 16.0,
                     ),
                   ],
@@ -139,7 +139,7 @@ class ColorFormatDisplay extends StatelessWidget {
                     child: Text(
                       formatValue,
                       style: TextStyle(
-                        color: textColor.withOpacity(0.9),
+                        color: textColor.withValues(alpha: 0.9),
                         fontSize: 11.0,
                         fontWeight: FontWeight.w400,
                       ),
@@ -246,7 +246,7 @@ class ColorFormatDisplayWithPreview extends StatelessWidget {
       button: true,
       onTap: _handleCopy,
       child: Material(
-        color: textColor.withOpacity(0.1),
+        color: textColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(12.0),
@@ -271,8 +271,7 @@ class ColorFormatDisplayWithPreview extends StatelessWidget {
                             color: colorValue,
                             borderRadius: BorderRadius.circular(4.0),
                             border: Border.all(
-                              color: textColor.withOpacity(0.3),
-                              width: 1.0,
+                              color: textColor.withValues(alpha: 0.3),
                             ),
                           ),
                         ),
@@ -295,7 +294,7 @@ class ColorFormatDisplayWithPreview extends StatelessWidget {
                     // Copy icon
                     Icon(
                       Icons.copy,
-                      color: textColor.withOpacity(0.6),
+                      color: textColor.withValues(alpha: 0.6),
                       size: 16.0,
                     ),
                   ],
@@ -307,7 +306,7 @@ class ColorFormatDisplayWithPreview extends StatelessWidget {
                     child: Text(
                       formatValue,
                       style: TextStyle(
-                        color: textColor.withOpacity(0.9),
+                        color: textColor.withValues(alpha: 0.9),
                         fontSize: 11.0,
                         fontWeight: FontWeight.w400,
                       ),
@@ -398,7 +397,7 @@ class CompactColorFormatDisplay extends StatelessWidget {
       button: true,
       onTap: _handleCopy,
       child: Material(
-        color: textColor.withOpacity(0.1),
+        color: textColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
@@ -428,7 +427,7 @@ class CompactColorFormatDisplay extends StatelessWidget {
                   child: Text(
                     formatValue,
                     style: TextStyle(
-                      color: textColor.withOpacity(0.9),
+                      color: textColor.withValues(alpha: 0.9),
                       fontSize: 11.0,
                       fontWeight: FontWeight.w400,
                     ),
@@ -442,7 +441,7 @@ class CompactColorFormatDisplay extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Icon(
                     Icons.copy,
-                    color: textColor.withOpacity(0.6),
+                    color: textColor.withValues(alpha: 0.6),
                     size: 14.0,
                   ),
                 ),

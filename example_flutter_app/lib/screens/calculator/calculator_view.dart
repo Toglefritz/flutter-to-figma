@@ -84,156 +84,162 @@ class CalculatorView extends StatelessWidget {
         title: const Text('Calculator Example'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Column(
-        children: [
-          CalculatorDisplay(
-            displayValue: state.calculatorState.display,
-            hasError: state.calculatorState.hasError,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  // Row 1: Clear button
-                  Expanded(
-                    child: Row(
-                      children: [
-                        CalculatorButton(
-                          text: 'C',
-                          type: CalculatorButtonType.clear,
-                          onPressed: state.onClearPressed,
+      body: Semantics(
+        label: 'Calculator interface',
+        child: Column(
+          children: [
+            CalculatorDisplay(
+              displayValue: state.calculatorState.display,
+              hasError: state.calculatorState.hasError,
+            ),
+            Expanded(
+              child: Semantics(
+                label: 'Calculator buttons',
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      // Row 1: Clear button
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CalculatorButton(
+                              text: 'C',
+                              type: CalculatorButtonType.clear,
+                              onPressed: state.onClearPressed,
+                            ),
+                            CalculatorButton(
+                              text: '±',
+                              type: CalculatorButtonType.function,
+                              onPressed:
+                                  () {}, // Placeholder for future implementation
+                            ),
+                            CalculatorButton(
+                              text: '%',
+                              type: CalculatorButtonType.function,
+                              onPressed:
+                                  () {}, // Placeholder for future implementation
+                            ),
+                            CalculatorButton(
+                              text: '÷',
+                              type: CalculatorButtonType.operation,
+                              onPressed: () => state.onOperationPressed('/'),
+                            ),
+                          ],
                         ),
-                        CalculatorButton(
-                          text: '±',
-                          type: CalculatorButtonType.function,
-                          onPressed:
-                              () {}, // Placeholder for future implementation
+                      ),
+                      // Row 2: Numbers 7, 8, 9 and division
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CalculatorButton(
+                              text: '7',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('7'),
+                            ),
+                            CalculatorButton(
+                              text: '8',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('8'),
+                            ),
+                            CalculatorButton(
+                              text: '9',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('9'),
+                            ),
+                            CalculatorButton(
+                              text: '×',
+                              type: CalculatorButtonType.operation,
+                              onPressed: () => state.onOperationPressed('*'),
+                            ),
+                          ],
                         ),
-                        CalculatorButton(
-                          text: '%',
-                          type: CalculatorButtonType.function,
-                          onPressed:
-                              () {}, // Placeholder for future implementation
+                      ),
+                      // Row 3: Numbers 4, 5, 6 and multiplication
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CalculatorButton(
+                              text: '4',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('4'),
+                            ),
+                            CalculatorButton(
+                              text: '5',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('5'),
+                            ),
+                            CalculatorButton(
+                              text: '6',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('6'),
+                            ),
+                            CalculatorButton(
+                              text: '−',
+                              type: CalculatorButtonType.operation,
+                              onPressed: () => state.onOperationPressed('-'),
+                            ),
+                          ],
                         ),
-                        CalculatorButton(
-                          text: '÷',
-                          type: CalculatorButtonType.operation,
-                          onPressed: () => state.onOperationPressed('/'),
+                      ),
+                      // Row 4: Numbers 1, 2, 3 and subtraction
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CalculatorButton(
+                              text: '1',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('1'),
+                            ),
+                            CalculatorButton(
+                              text: '2',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('2'),
+                            ),
+                            CalculatorButton(
+                              text: '3',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('3'),
+                            ),
+                            CalculatorButton(
+                              text: '+',
+                              type: CalculatorButtonType.operation,
+                              onPressed: () => state.onOperationPressed('+'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      // Row 5: Number 0, decimal point, equals, and addition
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CalculatorButton(
+                              text: '0',
+                              type: CalculatorButtonType.number,
+                              onPressed: () => state.onNumberPressed('0'),
+                            ),
+                            CalculatorButton(
+                              text: '.',
+                              type: CalculatorButtonType.function,
+                              onPressed: state.onDecimalPressed,
+                            ),
+                            CalculatorButton(
+                              text: '=',
+                              type: CalculatorButtonType.function,
+                              onPressed: state.onEqualsPressed,
+                            ),
+                            // Empty space for visual balance
+                            const Expanded(child: SizedBox()),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  // Row 2: Numbers 7, 8, 9 and division
-                  Expanded(
-                    child: Row(
-                      children: [
-                        CalculatorButton(
-                          text: '7',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('7'),
-                        ),
-                        CalculatorButton(
-                          text: '8',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('8'),
-                        ),
-                        CalculatorButton(
-                          text: '9',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('9'),
-                        ),
-                        CalculatorButton(
-                          text: '×',
-                          type: CalculatorButtonType.operation,
-                          onPressed: () => state.onOperationPressed('*'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Row 3: Numbers 4, 5, 6 and multiplication
-                  Expanded(
-                    child: Row(
-                      children: [
-                        CalculatorButton(
-                          text: '4',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('4'),
-                        ),
-                        CalculatorButton(
-                          text: '5',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('5'),
-                        ),
-                        CalculatorButton(
-                          text: '6',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('6'),
-                        ),
-                        CalculatorButton(
-                          text: '−',
-                          type: CalculatorButtonType.operation,
-                          onPressed: () => state.onOperationPressed('-'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Row 4: Numbers 1, 2, 3 and subtraction
-                  Expanded(
-                    child: Row(
-                      children: [
-                        CalculatorButton(
-                          text: '1',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('1'),
-                        ),
-                        CalculatorButton(
-                          text: '2',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('2'),
-                        ),
-                        CalculatorButton(
-                          text: '3',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('3'),
-                        ),
-                        CalculatorButton(
-                          text: '+',
-                          type: CalculatorButtonType.operation,
-                          onPressed: () => state.onOperationPressed('+'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Row 5: Number 0, decimal point, equals, and addition
-                  Expanded(
-                    child: Row(
-                      children: [
-                        CalculatorButton(
-                          text: '0',
-                          type: CalculatorButtonType.number,
-                          onPressed: () => state.onNumberPressed('0'),
-                        ),
-                        CalculatorButton(
-                          text: '.',
-                          type: CalculatorButtonType.function,
-                          onPressed: state.onDecimalPressed,
-                        ),
-                        CalculatorButton(
-                          text: '=',
-                          type: CalculatorButtonType.function,
-                          onPressed: state.onEqualsPressed,
-                        ),
-                        // Empty space for visual balance
-                        const Expanded(child: SizedBox()),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

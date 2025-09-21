@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'screens/home/home_route.dart';
+import 'utils/error_handler.dart';
 
 /// Application entry point that initializes and runs the Flutter Examples app.
 ///
 /// This function is called by the Flutter framework when the app starts.
 /// It creates the root widget and begins the widget tree rendering process.
+/// The function also initializes global error handling to ensure proper
+/// error reporting and user feedback throughout the application.
 ///
-/// The app uses Material Design 3 theming with a deep purple color scheme
+/// The app uses Material Design 3 theming with a teal color scheme
 /// and provides navigation to various Flutter UI examples.
+///
+/// Error Handling:
+/// Global error handlers are initialized to catch both Flutter framework
+/// errors and uncaught exceptions, providing appropriate user feedback
+/// and detailed logging for debugging purposes.
 void main() {
+  // Initialize global error handling
+  ErrorHandler.initialize();
+
   runApp(const FlutterExampleApp());
 }
 

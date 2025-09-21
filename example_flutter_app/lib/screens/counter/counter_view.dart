@@ -73,40 +73,58 @@ class CounterView extends StatelessWidget {
         title: const Text('Counter Example'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
-          IconButton(
-            onPressed: state.resetCounter,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Reset Counter',
+          Semantics(
+            button: true,
+            label: 'Reset counter to zero',
+            child: IconButton(
+              onPressed: state.resetCounter,
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Reset Counter',
+            ),
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'You have pushed the button this many times:',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Text(
-                '${state.counter}',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+      body: Semantics(
+        label: 'Counter display area',
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Semantics(
+                label: 'Counter description',
+                child: const Text(
+                  'You have pushed the button this many times:',
+                  style: TextStyle(fontSize: 16.0),
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Semantics(
+                  label: 'Current counter value: ${state.counter}',
+                  liveRegion: true,
+                  child: Text(
+                    '${state.counter}',
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: state.incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Increment counter by one',
+        child: FloatingActionButton(
+          onPressed: state.incrementCounter,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

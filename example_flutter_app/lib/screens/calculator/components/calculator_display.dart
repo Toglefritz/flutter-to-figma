@@ -83,30 +83,36 @@ class CalculatorDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outline,
+    return Semantics(
+      label: hasError
+          ? 'Calculator display showing error: $displayValue'
+          : 'Calculator display showing: $displayValue',
+      liveRegion: true,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(
+            bottom: BorderSide(
+              color: theme.colorScheme.outline,
+            ),
           ),
         ),
-      ),
-      child: Text(
-        displayValue,
-        style: TextStyle(
-          fontSize: 32.0,
-          fontWeight: FontWeight.w300,
-          color: hasError
-              ? theme.colorScheme.error
-              : theme.colorScheme.onSurface,
-          fontFamily: 'monospace',
+        child: Text(
+          displayValue,
+          style: TextStyle(
+            fontSize: 32.0,
+            fontWeight: FontWeight.w300,
+            color: hasError
+                ? theme.colorScheme.error
+                : theme.colorScheme.onSurface,
+            fontFamily: 'monospace',
+          ),
+          textAlign: TextAlign.right,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ),
-        textAlign: TextAlign.right,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
       ),
     );
   }

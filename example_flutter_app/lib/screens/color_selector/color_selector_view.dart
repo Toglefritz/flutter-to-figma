@@ -70,7 +70,7 @@ class ColorSelectorView extends StatelessWidget {
             bottom: TabBar(
               controller: state.tabController,
               labelColor: state.textColor,
-              unselectedLabelColor: state.textColor.withOpacity(0.6),
+              unselectedLabelColor: state.textColor.withValues(alpha: 0.6),
               indicatorColor: state.textColor,
               tabs: const [
                 Tab(
@@ -85,29 +85,42 @@ class ColorSelectorView extends StatelessWidget {
             ),
           ),
           body: SafeArea(
-            child: Column(
-              children: [
-                // Color controls section
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TabBarView(
-                      controller: state.tabController,
-                      children: [
-                        _buildRgbControls(),
-                        _buildHslControls(),
-                      ],
-                    ),
-                  ),
-                ),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                // Calculate available height for responsive layout
+                final double availableHeight = constraints.maxHeight;
+                final bool isCompactLayout = availableHeight < 600;
 
-                // Color format displays section
-                Expanded(
-                  flex: 1,
-                  child: _buildColorFormats(),
-                ),
-              ],
+                return Column(
+                  children: [
+                    // Color controls section
+                    Expanded(
+                      flex: isCompactLayout ? 2 : 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TabBarView(
+                          controller: state.tabController,
+                          children: [
+                            _buildRgbControls(),
+                            _buildHslControls(),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Color format displays section
+                    Flexible(
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minHeight: isCompactLayout ? 100.0 : 120.0,
+                          maxHeight: isCompactLayout ? 140.0 : 200.0,
+                        ),
+                        child: _buildColorFormats(),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         );
@@ -340,11 +353,12 @@ class ColorSelectorView extends StatelessWidget {
   /// Each format is displayed in a card with appropriate styling and
   /// visual feedback for copy operations.
   ///
-  /// Returns a scrollable section containing format display cards.
+  /// Returns a responsive section containing format display cards that
+  /// adapts to available space and screen size constraints.
   Widget _buildColorFormats() {
     return Container(
       decoration: BoxDecoration(
-        color: state.textColor.withOpacity(0.1),
+        color: state.textColor.withValues(alpha: 0.1),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24.0),
           topRight: Radius.circular(24.0),
@@ -363,45 +377,57 @@ class ColorSelectorView extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: SizedBox(
-                height: 120.0, // Fixed height for the grid
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12.0,
-                  mainAxisSpacing: 12.0,
-                  childAspectRatio: 2.5,
-                  children: [
-                    ColorFormatDisplay(
-                      formatName: 'Hex',
-                      formatValue: state.currentColor.hexString,
-                      textColor: state.textColor,
-                      onCopy: (format, value) =>
-                          state.copyColorFormat(format.toLowerCase()),
-                    ),
-                    ColorFormatDisplay(
-                      formatName: 'RGB',
-                      formatValue: state.currentColor.rgbString,
-                      textColor: state.textColor,
-                      onCopy: (format, value) =>
-                          state.copyColorFormat(format.toLowerCase()),
-                    ),
-                    ColorFormatDisplay(
-                      formatName: 'RGBA',
-                      formatValue: state.currentColor.rgbaString,
-                      textColor: state.textColor,
-                      onCopy: (format, value) =>
-                          state.copyColorFormat(format.toLowerCase()),
-                    ),
-                    ColorFormatDisplay(
-                      formatName: 'HSL',
-                      formatValue: state.currentColor.hslString,
-                      textColor: state.textColor,
-                      onCopy: (format, value) =>
-                          state.copyColorFormat(format.toLowerCase()),
-                    ),
-                  ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    // Calculate responsive grid parameters
+                    final double availableWidth = constraints.maxWidth;
+                    final int crossAxisCount = availableWidth > 400 ? 2 : 1;
+                    final double childAspectRatio = availableWidth > 400
+                        ? 2.8
+                        : 4.5;
+
+                    return GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 6.0,
+                      childAspectRatio: childAspectRatio,
+                      children: [
+                        ColorFormatDisplay(
+                          formatName: 'Hex',
+                          formatValue: state.currentColor.hexString,
+                          textColor: state.textColor,
+                          onCopy: (format, value) =>
+                              state.copyColorFormat(format.toLowerCase()),
+                        ),
+                        ColorFormatDisplay(
+                          formatName: 'RGB',
+                          formatValue: state.currentColor.rgbString,
+                          textColor: state.textColor,
+                          onCopy: (format, value) =>
+                              state.copyColorFormat(format.toLowerCase()),
+                        ),
+                        ColorFormatDisplay(
+                          formatName: 'RGBA',
+                          formatValue: state.currentColor.rgbaString,
+                          textColor: state.textColor,
+                          onCopy: (format, value) =>
+                              state.copyColorFormat(format.toLowerCase()),
+                        ),
+                        ColorFormatDisplay(
+                          formatName: 'HSL',
+                          formatValue: state.currentColor.hslString,
+                          textColor: state.textColor,
+                          onCopy: (format, value) =>
+                              state.copyColorFormat(format.toLowerCase()),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

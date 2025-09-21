@@ -148,14 +148,16 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses text input for the red component and updates
   /// the color if the input is valid. Invalid input is ignored to
-  /// prevent errors during user typing.
+  /// prevent errors during user typing. Uses deferred state updates
+  /// to prevent setState during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the red value
   void updateRedFromText(String text) {
     final int? value = int.tryParse(text);
     if (value != null && value >= 0 && value <= 255) {
-      updateRed(value);
+      final ColorData newColor = currentColor.copyWithRgb(red: value);
+      _updateColorDeferred(newColor);
     }
   }
 
@@ -179,14 +181,16 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses text input for the green component and updates
   /// the color if the input is valid. Invalid input is ignored to
-  /// prevent errors during user typing.
+  /// prevent errors during user typing. Uses deferred state updates
+  /// to prevent setState during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the green value
   void updateGreenFromText(String text) {
     final int? value = int.tryParse(text);
     if (value != null && value >= 0 && value <= 255) {
-      updateGreen(value);
+      final ColorData newColor = currentColor.copyWithRgb(green: value);
+      _updateColorDeferred(newColor);
     }
   }
 
@@ -210,14 +214,16 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses text input for the blue component and updates
   /// the color if the input is valid. Invalid input is ignored to
-  /// prevent errors during user typing.
+  /// prevent errors during user typing. Uses deferred state updates
+  /// to prevent setState during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the blue value
   void updateBlueFromText(String text) {
     final int? value = int.tryParse(text);
     if (value != null && value >= 0 && value <= 255) {
-      updateBlue(value);
+      final ColorData newColor = currentColor.copyWithRgb(blue: value);
+      _updateColorDeferred(newColor);
     }
   }
 
@@ -241,14 +247,16 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses text input for the hue component and updates
   /// the color if the input is valid. Invalid input is ignored to
-  /// prevent errors during user typing.
+  /// prevent errors during user typing. Uses deferred state updates
+  /// to prevent setState during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the hue value
   void updateHueFromText(String text) {
     final double? value = double.tryParse(text);
     if (value != null && value >= 0 && value <= 360) {
-      updateHue(value);
+      final ColorData newColor = currentColor.copyWithHsl(hue: value);
+      _updateColorDeferred(newColor);
     }
   }
 
@@ -272,14 +280,16 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses text input for the saturation component and updates
   /// the color if the input is valid. Invalid input is ignored to
-  /// prevent errors during user typing.
+  /// prevent errors during user typing. Uses deferred state updates
+  /// to prevent setState during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the saturation value
   void updateSaturationFromText(String text) {
     final double? value = double.tryParse(text);
     if (value != null && value >= 0 && value <= 100) {
-      updateSaturation(value);
+      final ColorData newColor = currentColor.copyWithHsl(saturation: value);
+      _updateColorDeferred(newColor);
     }
   }
 
@@ -303,14 +313,16 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses text input for the lightness component and updates
   /// the color if the input is valid. Invalid input is ignored to
-  /// prevent errors during user typing.
+  /// prevent errors during user typing. Uses deferred state updates
+  /// to prevent setState during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the lightness value
   void updateLightnessFromText(String text) {
     final double? value = double.tryParse(text);
     if (value != null && value >= 0 && value <= 100) {
-      updateLightness(value);
+      final ColorData newColor = currentColor.copyWithHsl(lightness: value);
+      _updateColorDeferred(newColor);
     }
   }
 
@@ -318,25 +330,81 @@ class ColorSelectorController extends State<ColorSelectorRoute>
   ///
   /// This method parses hex color string input and updates the color
   /// if the input is valid. Invalid input is ignored to prevent errors
-  /// during user typing.
+  /// during user typing. Uses deferred state updates to prevent setState
+  /// during build phase errors.
   ///
   /// Parameters:
   /// * [text] - Text input containing the hex color string
   void updateFromHexString(String text) {
     try {
       final ColorData newColor = ColorData.fromHex(text);
-      _updateColorWithAnimation(newColor);
+      _updateColorDeferred(newColor);
     } catch (e) {
       // Ignore invalid hex strings during typing
     }
   }
 
+  /// Updates the current color using deferred state updates.
+  ///
+  /// This method schedules color updates to occur after the current build
+  /// phase completes using post-frame callbacks. This prevents "setState()
+  /// called during build" errors while maintaining smooth visual transitions.
+  ///
+  /// Parameters:
+  /// * [newColor] - The new ColorData to transition to
+  ///
+  /// The method defers both state updates and animation triggers to ensure
+  /// they occur outside the build phase, preventing timing conflicts.
+  void _updateColorDeferred(ColorData newColor) {
+    // Schedule state update for after build completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          previousColor = currentColor.flutterColor;
+          currentColor = newColor;
+        });
+        _startColorAnimation();
+      }
+    });
+  }
+
+  /// Starts color animation safely outside the build phase.
+  ///
+  /// This method creates and starts the color transition animation using
+  /// post-frame callbacks to ensure it runs outside the build phase.
+  /// It includes safety checks to prevent animation errors during widget
+  /// lifecycle changes.
+  ///
+  /// The animation interpolates between the previous and current colors
+  /// to provide smooth visual transitions for background color changes.
+  void _startColorAnimation() {
+    if (mounted && !colorAnimationController.isAnimating) {
+      try {
+        colorAnimation =
+            ColorTween(
+              begin: previousColor,
+              end: currentColor.flutterColor,
+            ).animate(
+              CurvedAnimation(
+                parent: colorAnimationController,
+                curve: Curves.easeInOut,
+              ),
+            );
+
+        colorAnimationController.forward(from: 0.0);
+      } catch (e) {
+        // Fallback to immediate color update if animation fails
+        debugPrint('Animation error: $e');
+        previousColor = currentColor.flutterColor;
+      }
+    }
+  }
+
   /// Updates the current color with smooth animation transitions.
   ///
-  /// This internal method handles color updates with smooth visual transitions
-  /// by animating between the previous and new color values. It ensures that
-  /// background color changes are visually smooth and provides better user
-  /// experience during color manipulation.
+  /// This method is used for slider updates that are not called during
+  /// the build phase. It provides immediate state updates with animation
+  /// for responsive user interaction feedback.
   ///
   /// Parameters:
   /// * [newColor] - The new ColorData to transition to
@@ -347,22 +415,10 @@ class ColorSelectorController extends State<ColorSelectorRoute>
     setState(() {
       previousColor = currentColor.flutterColor;
       currentColor = newColor;
-
-      // Update color animation
-      colorAnimation =
-          ColorTween(
-            begin: previousColor,
-            end: currentColor.flutterColor,
-          ).animate(
-            CurvedAnimation(
-              parent: colorAnimationController,
-              curve: Curves.easeInOut,
-            ),
-          );
-
-      // Start animation
-      colorAnimationController.forward(from: 0.0);
     });
+
+    // Start animation after state update
+    _startColorAnimation();
   }
 
   /// Copies the specified color format to the system clipboard.

@@ -394,12 +394,12 @@ class _ColorInputFieldState extends State<ColorInputField> {
             labelText: widget.label,
             labelStyle: TextStyle(
               color: isValid
-                  ? widget.textColor.withOpacity(0.7)
+                  ? widget.textColor.withValues(alpha: 0.7)
                   : Colors.red.shade300,
             ),
             suffixText: widget.suffix.isNotEmpty ? widget.suffix : null,
             suffixStyle: TextStyle(
-              color: widget.textColor.withOpacity(0.6),
+              color: widget.textColor.withValues(alpha: 0.6),
             ),
             errorText: errorMessage,
             errorStyle: TextStyle(
@@ -408,26 +408,26 @@ class _ColorInputFieldState extends State<ColorInputField> {
             ),
             helperText: widget.helperText,
             helperStyle: TextStyle(
-              color: widget.textColor.withOpacity(0.6),
+              color: widget.textColor.withValues(alpha: 0.6),
               fontSize: 12.0,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
-                color: widget.textColor.withOpacity(0.3),
+                color: widget.textColor.withValues(alpha: 0.3),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
-                color: widget.textColor.withOpacity(0.3),
+                color: widget.textColor.withValues(alpha: 0.3),
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
                 color: isValid
-                    ? widget.textColor.withOpacity(0.8)
+                    ? widget.textColor.withValues(alpha: 0.8)
                     : Colors.red.shade300,
                 width: 2.0,
               ),

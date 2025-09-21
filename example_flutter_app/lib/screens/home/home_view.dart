@@ -59,32 +59,46 @@ class HomeView extends StatelessWidget {
         title: const Text('Flutter Examples'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16.0,
-          mainAxisSpacing: 16.0,
-          children: [
-            _ExampleCard(
-              title: 'Counter',
-              description: 'Simple counter with increment functionality',
-              icon: Icons.add_circle_outline,
-              onTap: state.navigateToCounter,
-            ),
-            _ExampleCard(
-              title: 'Calculator',
-              description: 'Basic calculator with grid layout',
-              icon: Icons.calculate_outlined,
-              onTap: state.navigateToCalculator,
-            ),
-            _ExampleCard(
-              title: 'Color Selector',
-              description: 'Advanced color picker with real-time updates',
-              icon: Icons.palette_outlined,
-              onTap: state.navigateToColorSelector,
-            ),
-          ],
+      body: Semantics(
+        label: 'Flutter examples navigation screen',
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              // Calculate responsive grid parameters
+              final double availableWidth = constraints.maxWidth;
+              final int crossAxisCount = availableWidth > 600 ? 3 : 2;
+              final double childAspectRatio = availableWidth > 600 ? 1.2 : 1.0;
+
+              return GridView.count(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+                childAspectRatio: childAspectRatio,
+                semanticChildCount: 3,
+                children: [
+                  _ExampleCard(
+                    title: 'Counter',
+                    description: 'Simple counter with increment functionality',
+                    icon: Icons.add_circle_outline,
+                    onTap: state.navigateToCounter,
+                  ),
+                  _ExampleCard(
+                    title: 'Calculator',
+                    description: 'Basic calculator with grid layout',
+                    icon: Icons.calculate_outlined,
+                    onTap: state.navigateToCalculator,
+                  ),
+                  _ExampleCard(
+                    title: 'Color Selector',
+                    description: 'Advanced color picker with real-time updates',
+                    icon: Icons.palette_outlined,
+                    onTap: state.navigateToColorSelector,
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -177,42 +191,58 @@ class _ExampleCard extends StatelessWidget {
   /// @returns Card widget containing the complete example card UI
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 48.0,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+    return Semantics(
+      button: true,
+      label: 'Navigate to $title example. $description',
+      onTap: onTap,
+      child: Card(
+        elevation: 4.0,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.0),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Semantics(
+                  label: '$title example icon',
+                  child: Icon(
+                    icon,
+                    size: 32.0, // Reduced size for better fit
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  description,
-                  style: Theme.of(context).textTheme.bodySmall,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                Padding(
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    description,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 10.0, // Smaller font for better fit
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

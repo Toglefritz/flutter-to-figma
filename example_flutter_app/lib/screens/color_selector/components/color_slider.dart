@@ -149,7 +149,7 @@ class ColorSlider extends StatelessWidget {
               Text(
                 '${value.round()}$suffix',
                 style: TextStyle(
-                  color: textColor.withOpacity(0.8),
+                  color: textColor.withValues(alpha: 0.8),
                   fontSize: 14.0,
                   fontWeight: FontWeight.w400,
                 ),
@@ -163,8 +163,8 @@ class ColorSlider extends StatelessWidget {
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 // Active track styling
-                activeTrackColor: accentColor.withOpacity(0.8),
-                inactiveTrackColor: textColor.withOpacity(0.2),
+                activeTrackColor: accentColor.withValues(alpha: 0.8),
+                inactiveTrackColor: textColor.withValues(alpha: 0.2),
 
                 // Thumb styling
                 thumbColor: accentColor,
@@ -173,7 +173,7 @@ class ColorSlider extends StatelessWidget {
                 ),
 
                 // Overlay styling for touch feedback
-                overlayColor: accentColor.withOpacity(0.2),
+                overlayColor: accentColor.withValues(alpha: 0.2),
                 overlayShape: const RoundSliderOverlayShape(
                   overlayRadius: 20.0,
                 ),
@@ -195,8 +195,8 @@ class ColorSlider extends StatelessWidget {
                 tickMarkShape: const RoundSliderTickMarkShape(
                   tickMarkRadius: 2.0,
                 ),
-                activeTickMarkColor: accentColor.withOpacity(0.6),
-                inactiveTickMarkColor: textColor.withOpacity(0.1),
+                activeTickMarkColor: accentColor.withValues(alpha: 0.6),
+                inactiveTickMarkColor: textColor.withValues(alpha: 0.1),
               ),
               child: Slider(
                 value: value,
@@ -336,7 +336,7 @@ class GradientColorSlider extends StatelessWidget {
               Text(
                 '${value.round()}$suffix',
                 style: TextStyle(
-                  color: textColor.withOpacity(0.8),
+                  color: textColor.withValues(alpha: 0.8),
                   fontSize: 14.0,
                   fontWeight: FontWeight.w400,
                 ),
@@ -360,8 +360,7 @@ class GradientColorSlider extends StatelessWidget {
                       end: Alignment.centerRight,
                     ),
                     border: Border.all(
-                      color: textColor.withOpacity(0.2),
-                      width: 1.0,
+                      color: textColor.withValues(alpha: 0.2),
                     ),
                   ),
                 ),
@@ -380,7 +379,7 @@ class GradientColorSlider extends StatelessWidget {
                     ),
 
                     // Overlay styling
-                    overlayColor: Colors.white.withOpacity(0.2),
+                    overlayColor: Colors.white.withValues(alpha: 0.2),
                     overlayShape: const RoundSliderOverlayShape(
                       overlayRadius: 22.0,
                     ),

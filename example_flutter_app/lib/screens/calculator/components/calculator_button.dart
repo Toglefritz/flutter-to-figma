@@ -196,26 +196,75 @@ class CalculatorButton extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _getBackgroundColor(context),
-            foregroundColor: _getTextColor(context),
-            elevation: 2.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        child: Semantics(
+          button: true,
+          label: _getSemanticLabel(),
+          child: ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _getBackgroundColor(context),
+              foregroundColor: _getTextColor(context),
+              elevation: 2.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              minimumSize: const Size(48.0, 48.0), // Minimum accessibility size
             ),
-            minimumSize: const Size(64.0, 64.0),
-          ),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.w500,
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// Gets the semantic label for screen readers based on button type and text.
+  ///
+  /// This method provides descriptive labels for accessibility tools,
+  /// making the calculator usable by users with visual impairments.
+  /// The labels describe the button's function rather than just its text.
+  ///
+  /// @returns Descriptive label for screen readers
+  String _getSemanticLabel() {
+    switch (type) {
+      case CalculatorButtonType.number:
+        return 'Number $text';
+      case CalculatorButtonType.operation:
+        switch (text) {
+          case '+':
+            return 'Plus';
+          case '−':
+          case '-':
+            return 'Minus';
+          case '×':
+          case '*':
+            return 'Multiply';
+          case '÷':
+          case '/':
+            return 'Divide';
+          default:
+            return 'Operation $text';
+        }
+      case CalculatorButtonType.function:
+        switch (text) {
+          case '=':
+            return 'Equals';
+          case '.':
+            return 'Decimal point';
+          case '±':
+            return 'Plus minus';
+          case '%':
+            return 'Percent';
+          default:
+            return 'Function $text';
+        }
+      case CalculatorButtonType.clear:
+        return 'Clear all';
+    }
   }
 }
