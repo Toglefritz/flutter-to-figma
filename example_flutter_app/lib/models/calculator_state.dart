@@ -101,7 +101,6 @@ class CalculatorState {
     return CalculatorState(
       display: errorMessage,
       hasError: true,
-      isNewInput: true,
     );
   }
 
@@ -119,7 +118,6 @@ class CalculatorState {
   factory CalculatorState.withValue(double value) {
     return CalculatorState(
       display: _formatNumber(value),
-      isNewInput: true,
     );
   }
 
@@ -140,7 +138,6 @@ class CalculatorState {
       display: _formatNumber(firstOperand),
       operand1: firstOperand,
       operation: operation,
-      isNewInput: true,
     );
   }
 
@@ -297,47 +294,5 @@ class CalculatorState {
         'isNewInput: $isNewInput, '
         'hasError: $hasError'
         ')';
-  }
-
-  /// Compares this state with another for equality.
-  ///
-  /// Two CalculatorState instances are considered equal if all their
-  /// properties have the same values. This is important for state
-  /// management and testing.
-  ///
-  /// Parameters:
-  /// * [other] - Object to compare with this state
-  ///
-  /// Returns true if states are equal, false otherwise.
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is CalculatorState &&
-        other.display == display &&
-        other.operand1 == operand1 &&
-        other.operand2 == operand2 &&
-        other.operation == operation &&
-        other.isNewInput == isNewInput &&
-        other.hasError == hasError;
-  }
-
-  /// Generates a hash code for this state.
-  ///
-  /// The hash code is computed from all properties to ensure that
-  /// equal states have equal hash codes, which is important for
-  /// using states in collections and for performance optimization.
-  ///
-  /// Returns an integer hash code for this state.
-  @override
-  int get hashCode {
-    return Object.hash(
-      display,
-      operand1,
-      operand2,
-      operation,
-      isNewInput,
-      hasError,
-    );
   }
 }

@@ -147,7 +147,7 @@ class ColorData {
 
     // Expand 3-digit hex to 6-digit
     if (hex.length == 3) {
-      hex = hex.split('').map((char) => char + char).join('');
+      hex = hex.split('').map((char) => char + char).join();
     }
 
     // Parse RGB components
@@ -170,9 +170,9 @@ class ColorData {
   /// Returns a ColorData instance representing the same color.
   factory ColorData.fromFlutterColor(Color color) {
     return ColorData.fromRgb(
-      red: color.red,
-      green: color.green,
-      blue: color.blue,
+      red: (color.r * 255.0).round() & 0xff,
+      green: (color.g * 255.0).round() & 0xff,
+      blue: (color.b * 255.0).round() & 0xff,
     );
   }
 
@@ -388,8 +388,8 @@ class ColorData {
   ///
   /// Returns normalized hue value in the range 0-360.
   static double _normalizeHue(double hue) {
-    hue = hue % 360.0;
-    return hue < 0 ? hue + 360.0 : hue;
+    final double normalizedHue = hue % 360.0;
+    return normalizedHue < 0 ? normalizedHue + 360.0 : normalizedHue;
   }
 
   /// Calculates the hue component from RGB values.
@@ -575,37 +575,5 @@ class ColorData {
         '${saturation.toStringAsFixed(1)}%, '
         '${lightness.toStringAsFixed(1)}%)'
         ')';
-  }
-
-  /// Compares this color with another for equality.
-  ///
-  /// Two ColorData instances are considered equal if all their RGB
-  /// components match exactly. HSL values are derived from RGB, so
-  /// RGB equality ensures complete color equality.
-  ///
-  /// Parameters:
-  /// * [other] - Object to compare with this color
-  ///
-  /// Returns true if colors are equal, false otherwise.
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is ColorData &&
-        other.red == red &&
-        other.green == green &&
-        other.blue == blue;
-  }
-
-  /// Generates a hash code for this color.
-  ///
-  /// The hash code is computed from RGB values to ensure that
-  /// equal colors have equal hash codes, which is important for
-  /// using colors in collections and for performance optimization.
-  ///
-  /// Returns an integer hash code for this color.
-  @override
-  int get hashCode {
-    return Object.hash(red, green, blue);
   }
 }

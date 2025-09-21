@@ -6,9 +6,9 @@ import 'calculator_view.dart';
 
 /// Controller for the calculator example business logic and state management.
 ///
-/// This controller extends `State<CalculatorRoute>` and implements the 
-/// controller layer of the MVC pattern. It manages complex calculator state 
-/// through an immutable CalculatorState object and provides methods for 
+/// This controller extends `State<CalculatorRoute>` and implements the
+/// controller layer of the MVC pattern. It manages complex calculator state
+/// through an immutable CalculatorState object and provides methods for
 /// mathematical operations, number input, and state transitions.
 ///
 /// State Management Strategy:
@@ -47,13 +47,7 @@ class CalculatorController extends State<CalculatorRoute> {
   /// * operand2: null (no second operand stored)
   /// * operation: null (no operation selected)
   /// * isNewInput: true (ready for new number input)
-  CalculatorState calculatorState = const CalculatorState(
-    display: '0',
-    operand1: null,
-    operand2: null,
-    operation: null,
-    isNewInput: true,
-  );
+  CalculatorState calculatorState = const CalculatorState();
 
   /// Handles number button presses and updates the display accordingly.
   ///
@@ -164,13 +158,7 @@ class CalculatorController extends State<CalculatorRoute> {
   /// Performance: O(1) operation with immediate UI feedback through setState().
   void onClearPressed() {
     setState(() {
-      calculatorState = const CalculatorState(
-        display: '0',
-        operand1: null,
-        operand2: null,
-        operation: null,
-        isNewInput: true,
-      );
+      calculatorState = const CalculatorState();
     });
   }
 

@@ -49,13 +49,10 @@ class ColorSelectorController extends State<ColorSelectorRoute> {
   /// Color changes create new ColorData instances through copyWith() to ensure
   /// immutability and predictable state transitions. Both RGB and HSL values
   /// are updated simultaneously to maintain color space synchronization.
-  ColorData currentColor = const ColorData(
+  ColorData currentColor = ColorData.fromRgb(
     red: 128,
     green: 128,
     blue: 128,
-    hue: 0.0,
-    saturation: 0.0,
-    lightness: 50.0,
   );
 
   /// Updates the red component of the RGB color representation.
