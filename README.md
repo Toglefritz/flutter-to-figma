@@ -1,5 +1,7 @@
 # Flutter → Figma Plugin
 
+<img src="./images/flutter_to_figma_icon.png" width=175 alt="Flutter to Figma plugin logo" />
+
 ## Description
 
 The **Flutter → Figma Plugin** is an experimental bridge between code and design. Its purpose is to automatically generate Figma designs from existing Flutter/Dart codebases, allowing developers and designers to work from a shared source of truth. By parsing Flutter widget trees, extracting styles from ThemeData, and translating layouts into Figma’s native Auto Layout and variable systems, the plugin recreates full screens or individual widgets directly on the Figma canvas.

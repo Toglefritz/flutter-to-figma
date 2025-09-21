@@ -1,0 +1,20 @@
+name: example_flutter_app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # Lint rules for Dart and Flutter used internally at Very Good Ventures
+  very_good_analysis: ^9.0.0
+
+flutter:
+  uses-material-design: true
