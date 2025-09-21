@@ -50,12 +50,14 @@ class CounterController extends State<CounterRoute> {
   /// that depend on the changed state.
   ///
   /// Error Handling: Includes overflow protection to prevent unexpected
-  /// behavior when approaching maximum integer values.
+  /// behavior when approaching maximum safe integer values. Uses a safe
+  /// maximum value that works across all platforms including web (JavaScript).
   void incrementCounter() {
     setState(() {
-      // Overflow protection: prevent increment if at maximum value
-      if (counter < 9223372036854775807) {
-        // Max int64 value
+      // Overflow protection: prevent increment if at maximum safe value
+      // Using Number.MAX_SAFE_INTEGER equivalent (2^53 - 1) for web compatibility
+      const int maxSafeInteger = 9007199254740991;
+      if (counter < maxSafeInteger) {
         counter++;
       }
     });
