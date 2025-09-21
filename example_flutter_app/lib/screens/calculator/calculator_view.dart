@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'calculator_controller.dart';
+import 'components/calculator_button.dart';
+import 'components/calculator_display.dart';
 
 /// View layer for the calculator example UI presentation.
 ///
@@ -50,25 +53,27 @@ class CalculatorView extends StatelessWidget {
   /// controller methods in response to user actions.
   final CalculatorController state;
 
-  /// Builds the calculator screen UI with placeholder content.
+  /// Builds the calculator screen UI with display and button grid layout.
   ///
-  /// Currently displays a simple placeholder message indicating that the full
-  /// calculator UI will be implemented in later tasks. The final implementation
-  /// will include a display area and grid of calculator buttons.
+  /// Creates a complete calculator interface with a display area showing
+  /// the current calculator state and a grid of buttons for user interaction.
+  /// The layout follows standard calculator conventions with proper spacing
+  /// and Material Design theming.
   ///
-  /// Planned Layout Structure:
+  /// Layout Structure:
   /// 1. AppBar with title and consistent theming
-  /// 2. Display area showing current calculator state
+  /// 2. CalculatorDisplay showing current state and results
   /// 3. Grid layout with calculator buttons:
-  ///    - Number buttons (0-9)
-  ///    - Operation buttons (+, -, *, /)
-  ///    - Function buttons (=, C, .)
-  ///    - Clear and backspace functionality
+  ///    - Row 1: Clear and operation buttons
+  ///    - Row 2: Numbers 7, 8, 9 and division
+  ///    - Row 3: Numbers 4, 5, 6 and multiplication
+  ///    - Row 4: Numbers 1, 2, 3 and subtraction
+  ///    - Row 5: Number 0, decimal point, equals, and addition
   ///
-  /// Current Implementation:
-  /// Shows placeholder text in centered layout with AppBar for navigation.
-  /// This provides the basic screen structure while full functionality
-  /// is developed in subsequent implementation tasks.
+  /// Button Layout:
+  /// The calculator uses a standard 4x5 grid layout with proper spacing
+  /// using Padding widgets. Each button type has distinct styling for
+  /// visual hierarchy and user guidance.
   ///
   /// @param context The build context provided by the Flutter framework
   /// @returns Scaffold widget containing the calculator screen UI
@@ -79,11 +84,156 @@ class CalculatorView extends StatelessWidget {
         title: const Text('Calculator Example'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: const Center(
-        child: Text(
-          'Calculator UI will be implemented in later tasks',
-          style: TextStyle(fontSize: 18.0),
-        ),
+      body: Column(
+        children: [
+          CalculatorDisplay(
+            displayValue: state.calculatorState.display,
+            hasError: state.calculatorState.hasError,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // Row 1: Clear button
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CalculatorButton(
+                          text: 'C',
+                          type: CalculatorButtonType.clear,
+                          onPressed: state.onClearPressed,
+                        ),
+                        CalculatorButton(
+                          text: '±',
+                          type: CalculatorButtonType.function,
+                          onPressed:
+                              () {}, // Placeholder for future implementation
+                        ),
+                        CalculatorButton(
+                          text: '%',
+                          type: CalculatorButtonType.function,
+                          onPressed:
+                              () {}, // Placeholder for future implementation
+                        ),
+                        CalculatorButton(
+                          text: '÷',
+                          type: CalculatorButtonType.operation,
+                          onPressed: () => state.onOperationPressed('/'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Row 2: Numbers 7, 8, 9 and division
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CalculatorButton(
+                          text: '7',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('7'),
+                        ),
+                        CalculatorButton(
+                          text: '8',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('8'),
+                        ),
+                        CalculatorButton(
+                          text: '9',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('9'),
+                        ),
+                        CalculatorButton(
+                          text: '×',
+                          type: CalculatorButtonType.operation,
+                          onPressed: () => state.onOperationPressed('*'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Row 3: Numbers 4, 5, 6 and multiplication
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CalculatorButton(
+                          text: '4',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('4'),
+                        ),
+                        CalculatorButton(
+                          text: '5',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('5'),
+                        ),
+                        CalculatorButton(
+                          text: '6',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('6'),
+                        ),
+                        CalculatorButton(
+                          text: '−',
+                          type: CalculatorButtonType.operation,
+                          onPressed: () => state.onOperationPressed('-'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Row 4: Numbers 1, 2, 3 and subtraction
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CalculatorButton(
+                          text: '1',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('1'),
+                        ),
+                        CalculatorButton(
+                          text: '2',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('2'),
+                        ),
+                        CalculatorButton(
+                          text: '3',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('3'),
+                        ),
+                        CalculatorButton(
+                          text: '+',
+                          type: CalculatorButtonType.operation,
+                          onPressed: () => state.onOperationPressed('+'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Row 5: Number 0, decimal point, equals, and addition
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CalculatorButton(
+                          text: '0',
+                          type: CalculatorButtonType.number,
+                          onPressed: () => state.onNumberPressed('0'),
+                        ),
+                        CalculatorButton(
+                          text: '.',
+                          type: CalculatorButtonType.function,
+                          onPressed: state.onDecimalPressed,
+                        ),
+                        CalculatorButton(
+                          text: '=',
+                          type: CalculatorButtonType.function,
+                          onPressed: state.onEqualsPressed,
+                        ),
+                        // Empty space for visual balance
+                        const Expanded(child: SizedBox()),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

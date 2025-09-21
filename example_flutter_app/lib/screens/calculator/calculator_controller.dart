@@ -67,11 +67,38 @@ class CalculatorController extends State<CalculatorRoute> {
   /// * Updates display value with new or appended digit
   /// * Sets isNewInput to false for continued digit entry
   /// * Maintains other state values (operands, operation) unchanged
-  ///
-  /// Implementation Note: Full implementation will be added in later tasks
-  /// as part of the calculator functionality development workflow.
   void onNumberPressed(String number) {
-    // Implementation will be added in later tasks
+    setState(() {
+      if (calculatorState.hasError) {
+        // Clear error state and start fresh with new number
+        calculatorState = CalculatorState(
+          display: number,
+          isNewInput: false,
+        );
+      } else if (calculatorState.isNewInput) {
+        // Replace display with new number
+        calculatorState = calculatorState.copyWith(
+          display: number,
+          isNewInput: false,
+        );
+      } else {
+        // Append digit to existing display
+        final String newDisplay = calculatorState.display == '0'
+            ? number
+            : calculatorState.display + number;
+
+        // Prevent display overflow (limit to reasonable length)
+        // Also validate that the resulting number is within acceptable range
+        if (newDisplay.length <= 10) {
+          final double? testValue = double.tryParse(newDisplay);
+          if (testValue != null && testValue.abs() < 1e10) {
+            calculatorState = calculatorState.copyWith(
+              display: newDisplay,
+            );
+          }
+        }
+      }
+    });
   }
 
   /// Handles operation button presses (+, -, *, /) and manages calculation state.
@@ -93,11 +120,52 @@ class CalculatorController extends State<CalculatorRoute> {
   /// * Stores current display value as operand1 (if not already set)
   /// * Performs pending calculations for chained operations
   /// * Sets isNewInput to true for next operand entry
-  ///
-  /// Implementation Note: Full implementation will be added in later tasks
-  /// as part of the calculator functionality development workflow.
   void onOperationPressed(String operation) {
-    // Implementation will be added in later tasks
+    setState(() {
+      if (calculatorState.hasError) {
+        // Clear error and start fresh
+        calculatorState = const CalculatorState();
+        return;
+      }
+
+      final double? currentValue = double.tryParse(calculatorState.display);
+      if (currentValue == null) return;
+
+      if (calculatorState.operand1 == null) {
+        // First operation - store operand and operation
+        calculatorState = calculatorState.copyWith(
+          operand1: currentValue,
+          operation: operation,
+          isNewInput: true,
+        );
+      } else if (calculatorState.operation != null &&
+          !calculatorState.isNewInput) {
+        // Chained operation - perform pending calculation first
+        final double? result = _performCalculation(
+          calculatorState.operand1!,
+          currentValue,
+          calculatorState.operation!,
+        );
+
+        if (result != null) {
+          calculatorState = calculatorState.copyWith(
+            display: _formatNumber(result),
+            operand1: result,
+            operation: operation,
+            isNewInput: true,
+          );
+        } else {
+          // Calculation error
+          calculatorState = CalculatorState.error();
+        }
+      } else {
+        // Update operation without calculation
+        calculatorState = calculatorState.copyWith(
+          operation: operation,
+          isNewInput: true,
+        );
+      }
+    });
   }
 
   /// Handles equals button press and performs the pending mathematical calculation.
@@ -123,11 +191,36 @@ class CalculatorController extends State<CalculatorRoute> {
   /// * Clears operand2 and operation after calculation
   /// * Sets isNewInput to true for fresh number entry
   /// * Preserves operand1 for potential chained operations
-  ///
-  /// Implementation Note: Full implementation will be added in later tasks
-  /// as part of the calculator functionality development workflow.
   void onEqualsPressed() {
-    // Implementation will be added in later tasks
+    setState(() {
+      if (calculatorState.hasError) return;
+
+      if (calculatorState.operand1 == null ||
+          calculatorState.operation == null) {
+        return; // Nothing to calculate
+      }
+
+      final double? operand2 = double.tryParse(calculatorState.display);
+      if (operand2 == null) return;
+
+      final double? result = _performCalculation(
+        calculatorState.operand1!,
+        operand2,
+        calculatorState.operation!,
+      );
+
+      if (result != null) {
+        calculatorState = calculatorState.copyWith(
+          display: _formatNumber(result),
+          operand1: result,
+          operand2: operand2,
+          isNewInput: true,
+        );
+      } else {
+        // Calculation error
+        calculatorState = CalculatorState.error();
+      }
+    });
   }
 
   /// Handles clear button press and resets the calculator to initial state.
@@ -183,11 +276,132 @@ class CalculatorController extends State<CalculatorRoute> {
   /// * Multiple decimal attempts: Ignores additional decimal points
   /// * Empty display: Starts with "0." format
   /// * Existing decimal: No change to prevent invalid formats
-  ///
-  /// Implementation Note: Full implementation will be added in later tasks
-  /// as part of the calculator functionality development workflow.
   void onDecimalPressed() {
-    // Implementation will be added in later tasks
+    setState(() {
+      if (calculatorState.hasError) {
+        // Clear error and start with "0."
+        calculatorState = const CalculatorState(
+          display: '0.',
+          isNewInput: false,
+        );
+      } else if (calculatorState.isNewInput) {
+        // Start new decimal number
+        calculatorState = calculatorState.copyWith(
+          display: '0.',
+          isNewInput: false,
+        );
+      } else if (!calculatorState.display.contains('.')) {
+        // Add decimal point to existing number
+        calculatorState = calculatorState.copyWith(
+          display: '${calculatorState.display}.',
+        );
+      }
+      // If decimal already exists, do nothing
+    });
+  }
+
+  /// Performs mathematical calculation between two operands with the specified operation.
+  ///
+  /// This private method executes the actual mathematical operations for the calculator.
+  /// It handles all supported operations (+, -, *, /) with comprehensive error checking
+  /// for edge cases like division by zero, overflow conditions, and invalid operation sequences.
+  ///
+  /// Supported Operations:
+  /// * Addition (+): Adds operand1 and operand2
+  /// * Subtraction (-): Subtracts operand2 from operand1
+  /// * Multiplication (*): Multiplies operand1 by operand2
+  /// * Division (/): Divides operand1 by operand2 with zero-check
+  ///
+  /// Error Handling:
+  /// * Division by zero: Returns null to indicate error
+  /// * Invalid operation: Returns null for unsupported operations
+  /// * Overflow/Underflow: Returns null for infinite or NaN results
+  /// * Number too large: Returns null if result exceeds display capacity
+  /// * Precision loss: Handles floating-point precision issues gracefully
+  ///
+  /// @param operand1 The first operand in the calculation
+  /// @param operand2 The second operand in the calculation
+  /// @param operation The mathematical operation to perform
+  /// @returns The calculation result, or null if an error occurred
+  double? _performCalculation(
+    double operand1,
+    double operand2,
+    String operation,
+  ) {
+    // Validate input operands
+    if (operand1.isNaN ||
+        operand1.isInfinite ||
+        operand2.isNaN ||
+        operand2.isInfinite) {
+      return null;
+    }
+
+    double result;
+
+    try {
+      switch (operation) {
+        case '+':
+          result = operand1 + operand2;
+        case '-':
+          result = operand1 - operand2;
+        case '*':
+          result = operand1 * operand2;
+        case '/':
+          if (operand2 == 0.0) {
+            return null; // Division by zero error
+          }
+          result = operand1 / operand2;
+        default:
+          return null; // Invalid operation
+      }
+
+      // Check for overflow, underflow, or invalid results
+      if (result.isNaN || result.isInfinite) {
+        return null;
+      }
+
+      // Check if result is too large for display (more than 10 digits)
+      if (result.abs() >= 1e10) {
+        return null;
+      }
+
+      // Handle very small numbers (underflow to zero)
+      if (result.abs() < 1e-10 && result != 0.0) {
+        result = 0.0;
+      }
+
+      return result;
+    } catch (e) {
+      // Catch any unexpected arithmetic errors
+      return null;
+    }
+  }
+
+  /// Formats a numeric value for display on the calculator screen.
+  ///
+  /// This method handles the conversion of double values to display strings
+  /// with appropriate formatting. It removes unnecessary decimal places and
+  /// handles special cases like very large or small numbers.
+  ///
+  /// @param value Numeric value to format
+  /// @returns Formatted string suitable for calculator display
+  String _formatNumber(double value) {
+    // Handle special cases
+    if (value.isNaN) return 'Error';
+    if (value.isInfinite) return 'Error';
+
+    // Format with appropriate precision
+    if (value == value.roundToDouble()) {
+      // Integer value - show without decimal
+      return value.round().toString();
+    } else {
+      // Decimal value - limit precision to avoid display overflow
+      String formatted = value.toStringAsFixed(8);
+      // Remove trailing zeros
+      formatted = formatted.replaceAll(RegExp(r'0*$'), '');
+      formatted = formatted.replaceAll(RegExp(r'\.$'), '');
+      return formatted;
+    }
   }
 
   /// Builds the calculator screen UI by delegating to CalculatorView.
