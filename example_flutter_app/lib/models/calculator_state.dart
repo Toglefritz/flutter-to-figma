@@ -1,16 +1,3 @@
-/// Calculator State Model
-///
-/// This model represents the complete state of a calculator application,
-/// including the current display value, stored operands, selected operation,
-/// and input state flags. The class is immutable to ensure predictable
-/// state management and follows Flutter best practices.
-///
-/// Key Components:
-/// * [CalculatorState] - Immutable state representation
-/// * Factory constructors for common calculator states
-/// * Validation methods for calculator operations
-/// * State transition helpers for calculator logic
-
 /// Represents the complete state of a calculator at any point in time.
 ///
 /// This immutable class encapsulates all information needed to represent
